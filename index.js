@@ -1,55 +1,55 @@
-let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 10000);
-camera.position.set(0, 0, 7);
-camera.lookAt(new THREE.Vector3(0, 0, 0));
-let renderer = new THREE.WebGLRenderer({
-		//antialias: true, // 是否进行抗锯齿
-		preserveDrawingBuffer: true // 是否保留缓冲区，直到手动清除或覆盖。
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
-document.body.appendChild(renderer.domElement);
-// THREEx.WindowResize.bind(renderer, camera);
-// 平行光 橙色
-let light1 = new THREE.DirectionalLight(0xff8000, 0.5);
-light1.position.set(1, 1, 0).normalize();
-scene.add(light1);
-// 平行光 绿色
-let light2 = new THREE.DirectionalLight(0xff8000, 0.5);
-light2.position.set(-1, 1, 0).normalize();
-scene.add(light2);
-// 点光源 青色
-let light3 = new THREE.PointLight(0x44FFAA, 15, 20);
-light3.position.set(0, -3, 0);
-scene.add(light3);
-// 点光源 橙色
-let light4 = new THREE.PointLight(0xff4400, 20, 20);
-light4.position.set(3, 3, 0);
-scene.add(light4);
-// 雾气效果，黑色，雾密度的增长速度 0.15
-scene.fog = new THREE.FogExp2(0x000000, 0.15);
-// 圆柱体模型,顶端半径，底端半径，高度，周长分割面，圆柱体高度分割面，圆柱体两端不覆盖
-let geometry = new THREE.CylinderGeometry(1, 1, 30, 32, 1, true);
-// 贴图
-let loader = new THREE.TextureLoader();
-let texture = loader.load("static/textures/water.jpg");
-// 纹理重复
-texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-// 圆柱体材质
-let material = new THREE.MeshLambertMaterial({
-		color: 0xFFFFFF,
-		map: texture,
-		// 双面
-		side: THREE.DoubleSide
-});
-// 圆柱对象
-let mesh = new THREE.Mesh(geometry, material);
-// X轴旋转 80 度，从圆柱底面往上看
-mesh.rotation.x = -Math.PI / 180 * 80;
-scene.add(mesh);
-// 渲染
-render();
-function render() {
+let scene, camera, renderer, geometry, loader, texture, mesh
+init()
+update()
+
+function init(){
+	scene = new THREE.Scene()
+	scene.fog = new THREE.FogExp2(0x000000, 0.15)
+
+	camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 10000)
+	camera.position.set(0, 0, 7)
+	camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+	renderer = new THREE.WebGLRenderer();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+
+	// 平行光 橙色
+	let light1 = new THREE.DirectionalLight(0xff8000);
+	light1.position.set(1, 1, 0)
+	scene.add(light1)
+	// 平行光 绿色
+	let light2 = new THREE.DirectionalLight(0xff8000);
+	light2.position.set(-1, 1, 0)
+	scene.add(light2)
+	// 点光源 青色
+	// let light3 = new THREE.PointLight(0x44FFAA, 15, 20);
+	let light3 = new THREE.DirectionalLight(0x44FFAA);
+	light3.position.set(0, -3, 0);
+	scene.add(light3);
+	// 点光源 橙色
+	// let light4 = new THREE.PointLight(0xff4400, 20, 20);
+	let light4 = new THREE.DirectionalLight(0xff4400);
+	light4.position.set(3, 3, 0);
+	scene.add(light4);
+
+	geometry = new THREE.CylinderGeometry(1, 1, 30, 32, 1, true);
+	let loader = new THREE.TextureLoader();
+	texture = loader.load("static/textures/water.jpg");
+	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+	let material = new THREE.MeshLambertMaterial({
+			color: 0xFFFFFF,
+			map: texture,
+			// 双面
+			side: THREE.DoubleSide
+	});
+
+	mesh = new THREE.Mesh(geometry, material);
+	mesh.rotation.x = THREE.Math.degToRad( -80 );
+	scene.add(mesh)
+}
+
+function update() {
 		// 纹理的位置移动
 		texture.offset.y += 0.008;
 		texture.offset.y %= 1;
@@ -60,5 +60,5 @@ function render() {
 		camera.position.y = Math.sin(angle - Math.PI / 2) * radius;
 		camera.rotation.z = angle;
 		renderer.render(scene, camera);
-		requestAnimationFrame(render);
+		requestAnimationFrame(update);
 }
