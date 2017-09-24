@@ -14,10 +14,36 @@ function init(){
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
 
+	geometry = new THREE.CylinderGeometry(1, 1, 30, 32, 2, true)
+	texture = new THREE.ImageUtils.loadTexture('static/textures/water.jpg', {}, ()=>{
+		renderer.render(scene, camera)
+	})
+	texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+	const material = new THREE.MeshLambertMaterial({color: 0xffffff,
+																									map: texture,
+																									side: THREE.DoubleSide
+																								})
+	mesh = new THREE.Mesh(geometry, material)
+	mesh.rotation.x = THREE.Math.degToRad( -80 );
+	scene.add(mesh)
+	//加一只狗
+	const geometryDog = new THREE.PlaneGeometry(1, 1, 32)
+	const textureDog = new THREE.ImageUtils.loadTexture('static/textures/dog.jpeg', {}, ()=>{
+		renderer.render(scene, camera)
+	})
+	const materialDog = new THREE.MeshBasicMaterial({map: textureDog})
+	const meshDog = new THREE.Mesh(geometryDog, materialDog)
+	meshDog.position.set(0,-1,3)
+	scene.add(meshDog)
+
+
+
 	// 平行光 橙色
 	let light1 = new THREE.DirectionalLight(0xff8000);
 	light1.position.set(1, 1, 0)
 	scene.add(light1)
+
+
 	// 平行光 绿色
 	let light2 = new THREE.DirectionalLight(0xff8000);
 	light2.position.set(-1, 1, 0)
@@ -32,27 +58,14 @@ function init(){
 	let light4 = new THREE.DirectionalLight(0xff4400);
 	light4.position.set(3, 3, 0);
 	scene.add(light4);
-
-	geometry = new THREE.CylinderGeometry(1, 1, 30, 32, 1, true);
-	let loader = new THREE.TextureLoader();
-	texture = loader.load("static/textures/water.jpg");
-	texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-	let material = new THREE.MeshLambertMaterial({
-			color: 0xFFFFFF,
-			map: texture,
-			// 双面
-			side: THREE.DoubleSide
-	});
-
-	mesh = new THREE.Mesh(geometry, material);
-	mesh.rotation.x = THREE.Math.degToRad( -80 );
-	scene.add(mesh)
+	// scene.add(light)
+	renderer.render(scene, camera)
 }
+
 
 function update() {
 		// 纹理的位置移动
 		texture.offset.y += 0.008;
-		texture.offset.y %= 1;
 		let seconds = Date.now() / 1000;
 		let radius = 0.9;
 		let angle = Math.sin(0.75 * seconds * Math.PI) / 4;
@@ -62,3 +75,5 @@ function update() {
 		renderer.render(scene, camera);
 		requestAnimationFrame(update);
 }
+
+
