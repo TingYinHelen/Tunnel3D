@@ -28,10 +28,14 @@ function init(){
 	scene.add(mesh)
 	//加一只狗
 	const geometryDog = new THREE.PlaneGeometry(1, 1, 32)
-	const textureDog = new THREE.ImageUtils.loadTexture('static/textures/dog.jpeg', {}, ()=>{
+	const textureDog = new THREE.ImageUtils.loadTexture('static/textures/dog.png', {}, ()=>{
 		renderer.render(scene, camera)
 	})
-	const materialDog = new THREE.MeshBasicMaterial({map: textureDog})
+	const materialDog = new THREE.MeshBasicMaterial({
+		map: textureDog,
+		transparent: true,
+		depthTest: false
+	})
 	const meshDog = new THREE.Mesh(geometryDog, materialDog)
 	meshDog.position.set(0,-1,3)
 	scene.add(meshDog)
