@@ -74,7 +74,7 @@
 		scene.add(mesh);
 		//加一只狗
 		const geometryDog = new THREE.PlaneGeometry(1, 1, 32);
-		const textureDog = new THREE.ImageUtils.loadTexture('static/textures/dog.png', {}, () => {
+		const textureDog = new THREE.ImageUtils.loadTexture('static/textures/dog2.png', {}, () => {
 			renderer.render(scene, camera);
 		});
 		const materialDog = new THREE.MeshBasicMaterial({
